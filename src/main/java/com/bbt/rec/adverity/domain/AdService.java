@@ -5,6 +5,7 @@ import com.bbt.rec.adverity.application.dto.DailySummaryDto;
 import com.bbt.rec.adverity.application.dto.Mapper;
 import com.bbt.rec.adverity.infrastructure.InMemoryAdRepository;
 import com.bbt.rec.adverity.infrastructure.LockedAdRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Service
 class AdService {
 
     private final AdRepository activeRepository = new InMemoryAdRepository();
