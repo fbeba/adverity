@@ -3,6 +3,8 @@ package com.bbt.rec.adverity.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static com.bbt.rec.adverity.domain.Dimension.DimensionType.CAMPAIGN;
 import static com.bbt.rec.adverity.domain.Dimension.DimensionType.DATASOURCE;
 import static java.time.LocalDate.now;
@@ -15,10 +17,11 @@ class AdServiceCtrTest {
 
     @BeforeEach
     void setup() {
-        service.store(new AdEntity("Bing", "CampOne", now().minusDays(1), 50, 100));
-        service.store(new AdEntity("Google", "CampOne", now(), 5, 100));
-        service.store(new AdEntity("Google", "CampTwo", now().plusDays(1), 60, 100));
-        service.store(new AdEntity("Carrot", "CampTwo", now().plusDays(1), 8, 100));
+        service.store(List.of(
+                new AdEntity("Bing", "CampOne", now().minusDays(1), 50, 100),
+                new AdEntity("Google", "CampOne", now(), 5, 100),
+                new AdEntity("Google", "CampTwo", now().plusDays(1), 60, 100),
+                new AdEntity("Carrot", "CampTwo", now().plusDays(1), 8, 100)));
     }
 
     @Test

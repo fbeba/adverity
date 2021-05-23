@@ -4,6 +4,7 @@ import com.bbt.rec.adverity.application.dto.CtrSummaryDto;
 import com.bbt.rec.adverity.application.dto.DailySummaryDto;
 import com.bbt.rec.adverity.application.dto.Mapper;
 import com.bbt.rec.adverity.infrastructure.InMemoryAdRepository;
+import com.bbt.rec.adverity.infrastructure.LockedAdRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,10 +14,15 @@ import java.util.stream.Collectors;
 
 class AdService {
 
-    private final AdRepository repository = new InMemoryAdRepository();
+    private final AdRepository activeRepository = new InMemoryAdRepository();
+    private final AdRepository lockedRepository = new LockedAdRepository();
+    private AdRepository repository = activeRepository;
 
-    AdEntity store(final AdEntity entity) {
-        return repository.store(entity);
+    List<AdEntity> store(final List<AdEntity> entities) {
+        lockRepository();
+        entities.forEach(activeRepository::store);
+        unlockRepository();
+        return entities;
     }
 
     int querySummarizingMetric(final Metric metric, final Dimension dimension, final LocalDate from, final LocalDate to) {
@@ -69,5 +75,13 @@ class AdService {
                 return AdEntity::getImpressions;
         }
         throw new IllegalArgumentException("Summarization not possible for CTR.");
+    }
+
+    private void unlockRepository() {
+        repository = activeRepository;
+    }
+
+    private void lockRepository() {
+        repository = lockedRepository;
     }
 }

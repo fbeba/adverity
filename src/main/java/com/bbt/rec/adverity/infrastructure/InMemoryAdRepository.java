@@ -4,8 +4,6 @@ import com.bbt.rec.adverity.domain.AdEntity;
 import com.bbt.rec.adverity.domain.AdRepository;
 import com.bbt.rec.adverity.domain.Dimension;
 import com.bbt.rec.adverity.exception.InvalidDimensionTypeException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -51,15 +49,13 @@ public class InMemoryAdRepository implements AdRepository {
             case CAMPAIGN:
                 return byCampaignRepo;
             case DATASOURCE:
-                // shallow copy
-                return deepCopyOf(byDatasourceRepo);
+                return byDatasourceRepo;
         }
         throw new InvalidDimensionTypeException(dimension.getType());
     }
 
     @Override
     public Map<LocalDate, List<AdEntity>> getAdsByDates(final LocalDate from, final LocalDate to) {
-        // shallow copy
         return byDateRepo.subMap(from, true, to, true);
     }
 
@@ -70,15 +66,5 @@ public class InMemoryAdRepository implements AdRepository {
         }
         list.add(value);
         repo.put(key, list);
-    }
-
-    private Map<String, List<AdEntity>> deepCopyOf(final Map<String, List<AdEntity>> original) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonString = mapper.writeValueAsString(original);
-            return mapper.readValue(jsonString, Map.class);
-        } catch (JsonProcessingException e) {
-            return original;
-        }
     }
 }
