@@ -24,6 +24,6 @@ class DimensionSummaryFactory {
             case CAMPAIGN:
                 return new CtrByCampaignSummaryDtoImpl(entry.getKey(), entry.getValue());
         }
-        throw new InvalidDimensionTypeException(type);
+        throw new InvalidDimensionTypeException(type.toString());
     }
 }

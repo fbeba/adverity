@@ -14,20 +14,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-class AdService {
+public class AdService {
 
     private final AdRepository activeRepository = new InMemoryAdRepository();
     private final AdRepository lockedRepository = new LockedAdRepository();
     private AdRepository repository = activeRepository;
 
-    List<AdEntity> store(final List<AdEntity> entities) {
+    public List<AdEntity> store(final List<AdEntity> entities) {
         lockRepository();
         entities.forEach(activeRepository::store);
         unlockRepository();
         return entities;
     }
 
-    int querySummarizingMetric(final Metric metric, final Dimension dimension, final LocalDate from, final LocalDate to) {
+    public int querySummarizingMetric(final Metric metric, final Dimension dimension, final LocalDate from, final LocalDate to) {
         return repository.getAdsBy(dimension)
                 .stream()
                 .filter(ad -> ad.inDateRange(from, to))
@@ -36,7 +36,7 @@ class AdService {
                 .orElse(0);
     }
 
-    CtrSummaryDto queryCtr(final Dimension dimension) {
+    public CtrSummaryDto queryCtr(final Dimension dimension) {
         var adsByDimension = repository.getRepoBy(dimension)
                 .entrySet().stream()
                 .collect(Collectors.toMap(
@@ -45,7 +45,7 @@ class AdService {
         return Mapper.toCtrDto(adsByDimension, dimension);
     }
 
-    DailySummaryDto queryDailyImpressions(LocalDate from, LocalDate to) {
+    public DailySummaryDto queryDailyImpressions(LocalDate from, LocalDate to) {
         var impressionsDaily = repository.getAdsByDates(from, to)
                 .entrySet().stream()
                 .collect(Collectors.toMap(

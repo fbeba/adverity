@@ -40,7 +40,7 @@ public class InMemoryAdRepository implements AdRepository {
                         .flatMap(List::stream)
                         .collect(toSet());
         }
-        throw new InvalidDimensionTypeException(dimension.getType());
+        throw new InvalidDimensionTypeException(dimension.getType().toString());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class InMemoryAdRepository implements AdRepository {
             case DATASOURCE:
                 return byDatasourceRepo;
         }
-        throw new InvalidDimensionTypeException(dimension.getType());
+        throw new InvalidDimensionTypeException(dimension.getType().toString());
     }
 
     @Override

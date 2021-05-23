@@ -1,16 +1,87 @@
 package com.bbt.rec.adverity.application;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.bbt.rec.adverity.application.dto.CtrSummaryDto;
+import com.bbt.rec.adverity.application.dto.DailySummaryDto;
+import com.bbt.rec.adverity.domain.AdService;
+import com.bbt.rec.adverity.domain.Dimension;
+import com.bbt.rec.adverity.domain.Metric;
+import com.bbt.rec.adverity.exception.InvalidDimensionTypeException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.ACCEPTED;
 
 @RestController
+@RequiredArgsConstructor
 class AdverityController {
-//    Total Clicks for a given Datasource for a given Date range
 
-    //@GetMapping
-    //List<String>
-//    Click-Through Rate (CTR) per Datasource and Campaign
-//    Impressions over time (daily)
+    private final AdService service;
+
+    @GetMapping("/impressions")
+    ResponseEntity<DailySummaryDto> findImpressionsInTimeWindow(@RequestParam(value = "from", required = false) final LocalDate requestedFrom,
+                                                                @RequestParam(value = "to", required = false) final LocalDate requestedTo) {
+        var from = Optional.ofNullable(requestedFrom).orElse(LocalDate.MIN);
+        var to = Optional.ofNullable(requestedTo).orElse(LocalDate.now());
+        return ResponseEntity
+                .ok()
+                .body(service.queryDailyImpressions(from, to));
+    }
+
+    @GetMapping("/ctr")
+    ResponseEntity<CtrSummaryDto> getCtrsForDimension(@RequestParam(value = "dimension") final String requestedDimension) {
+        var dimension = validateDimension(requestedDimension);
+        return ResponseEntity
+                .ok()
+                .body(service.queryCtr(dimension));
+    }
+
+    @GetMapping("/metric/{metric}/{datasource}")
+    ResponseEntity<Integer> getMetric(@PathVariable(value = "metric") final String requestedMetric,
+                                      @PathVariable(value = "datasource") final String datasource,
+                                      @RequestParam(value = "from", required = false) final LocalDate requestedFrom,
+                                      @RequestParam(value = "to", required = false) final LocalDate requestedTo) {
+        var metric = validateMetric(requestedMetric);
+        var dimension = Dimension.builder()
+                .ofType(Dimension.DimensionType.DATASOURCE)
+                .andValue(datasource)
+                .build();
+        var from = Optional.ofNullable(requestedFrom).orElse(LocalDate.MIN);
+        var to = Optional.ofNullable(requestedTo).orElse(LocalDate.now());
+        
+        return ResponseEntity
+                .ok()
+                .body(service.querySummarizingMetric(metric, dimension, from, to));
+    }
+
+    @PostMapping("/add")
+    ResponseEntity<Void> submitAdData() {
+        //TODO upload
+        return ResponseEntity
+                .status(ACCEPTED)
+                .build();
+    }
+
+
+    private Dimension validateDimension(String requested) {
+        for (var dim : Dimension.DimensionType.values()) {
+            if (dim.toString().startsWith(requested.toLowerCase())) {
+                return Dimension.builder().ofType(dim).build();
+            }
+        }
+        throw new InvalidDimensionTypeException(requested);
+    }
+
+    private Metric validateMetric(String requested) {
+        for (var metric : Metric.values()) {
+            if (metric.toString().startsWith(requested.toLowerCase())) {
+                return metric;
+            }
+        }
+        throw new IllegalArgumentException(requested);
+    }
 }
