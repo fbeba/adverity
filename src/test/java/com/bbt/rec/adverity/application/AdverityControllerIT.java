@@ -1,19 +1,14 @@
 package com.bbt.rec.adverity.application;
 
-import com.bbt.rec.adverity.domain.ImportService;
 import com.bbt.rec.adverity.exception.InvalidDimensionTypeException;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class AdverityControllerIT {
@@ -21,17 +16,16 @@ class AdverityControllerIT {
     @Autowired
     private AdverityController controller;
 
-    @Autowired
-    private ImportService importService;
-
     @Test
-    void findImpressionsInTimeWindow() throws Exception {
-        var path = String.join(File.separator, new FileSystemResource("").getFile().getAbsolutePath(), "src", "test", "resources", "ads_input_short.csv");
-        var a = importService.importFromCsv(path);
+    void findImpressionsInTimeWindow() {
+        // Given
+//        var request = new HttpGet( "http://localhost:8080/impressions" );
 
-        var impressions = controller.findImpressionsInTimeWindow(null, null);
+        // When
+//        var response = HttpClientBuilder.create().build().execute(request);
+        var response = new RestTemplate().getForObject("http://localhost:8080/impressions", String.class);
 
-        Assertions.assertThat(impressions).isNotNull();
+        assertThat(response).contains("\"metric\":\"IMPRESSIONS\"");
     }
 
     @Test

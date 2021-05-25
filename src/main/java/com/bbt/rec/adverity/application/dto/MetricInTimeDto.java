@@ -8,8 +8,8 @@ import java.util.List;
 @Value
 public class MetricInTimeDto {
 
-    @JsonProperty("metrics")
+    @JsonProperty("metric")
     String metricType;
-    @JsonProperty("metrics")
+    @JsonProperty("values")
     List<DailyMetricsDto> values;
 }
