@@ -17,12 +17,12 @@ class DimensionSummaryFactory {
         return new DimensionSummaryFactory(dimension);
     }
 
-    CtrByDimensionSummaryDto createDimensionSummaryDto(final Map.Entry<String, Double> entry) {
+    CtrByDimensionSummaryDto toSummaryDto(final Map.Entry<String, Double> entry) {
         switch (type) {
             case DATASOURCE:
-                return new CtrByDatasourceSummaryDtoImpl(entry.getKey(), entry.getValue());
+                return new CtrByDatasourceSummaryDto(entry.getKey(), entry.getValue());
             case CAMPAIGN:
-                return new CtrByCampaignSummaryDtoImpl(entry.getKey(), entry.getValue());
+                return new CtrByCampaignSummaryDto(entry.getKey(), entry.getValue());
         }
         throw new InvalidDimensionTypeException(type.toString());
     }

@@ -61,12 +61,11 @@ class AdverityController {
 
     @PostMapping("/add")
     ResponseEntity<Void> submitAdData() {
-        //TODO upload
+        //TODO upload file
         return ResponseEntity
                 .status(ACCEPTED)
                 .build();
     }
-
 
     private Dimension validateDimension(String requested) {
         for (var dim : Dimension.DimensionType.values()) {

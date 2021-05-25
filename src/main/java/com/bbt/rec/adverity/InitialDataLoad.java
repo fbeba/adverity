@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class TestDataLoad implements CommandLineRunner {
+public class InitialDataLoad implements CommandLineRunner {
 
     private final AdService adService;
     private final ImportService importService;
@@ -21,7 +21,10 @@ public class TestDataLoad implements CommandLineRunner {
     @Override
     public void run(final String... args) throws Exception {
         var path = String.join(File.separator, new FileSystemResource("").getFile().getAbsolutePath(), "src", "test", "resources", "ads_input_short.csv");
-        var entities = importService.importFromCsv(path).stream().map(Mapper::toEntity).collect(Collectors.toList());
+        var entities = importService.importFromCsv(path)
+                .stream()
+                .map(Mapper::toEntity)
+                .collect(Collectors.toList());
         adService.store(entities);
     }
 }

@@ -14,7 +14,7 @@ public class Mapper {
         var factory = DimensionSummaryFactory.forDimension(dimension);
         var ctrs = ctrByDimension
                 .entrySet().stream()
-                .map(factory::createDimensionSummaryDto)
+                .map(factory::toSummaryDto)
                 .collect(Collectors.toList());
         return new CtrSummaryDto(ctrs);
     }
@@ -28,6 +28,12 @@ public class Mapper {
     }
 
     public static AdEntity toEntity(final AdDto dto) {
-        return new AdEntity(dto.getDatasource(), dto.getCampaign(), dto.getDaily(), dto.getClicks(), dto.getImpressions());
+        return AdEntity.builder()
+                .datasource(dto.getDatasource())
+                .campaign(dto.getCampaign())
+                .daily(dto.getDaily())
+                .clicks(dto.getClicks())
+                .impressions(dto.getImpressions())
+                .build();
     }
 }

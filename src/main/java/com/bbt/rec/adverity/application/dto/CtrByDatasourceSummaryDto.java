@@ -3,12 +3,12 @@ package com.bbt.rec.adverity.application.dto;
 import lombok.Value;
 
 @Value
-class CtrByDatasourceSummaryDtoImpl implements CtrByDimensionSummaryDto {
+class CtrByDatasourceSummaryDto implements CtrByDimensionSummaryDto {
 
     String datasource;
     double ctr;
 
-    CtrByDatasourceSummaryDtoImpl(final String datasource, final double ctr) {
+    CtrByDatasourceSummaryDto(final String datasource, final double ctr) {
         this.datasource = datasource;
         this.ctr = ctr;
     }

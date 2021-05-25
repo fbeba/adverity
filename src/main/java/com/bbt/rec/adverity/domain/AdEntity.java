@@ -1,7 +1,10 @@
 package com.bbt.rec.adverity.domain;
 
+import lombok.Builder;
+
 import java.time.LocalDate;
 
+@Builder
 public class AdEntity {
 
     private final String datasource;
@@ -9,14 +12,6 @@ public class AdEntity {
     private final LocalDate daily;
     private final int clicks;
     private final int impressions;
-
-    public AdEntity(final String datasource, final String campaign, final LocalDate daily, final int clicks, final int impressions) {
-        this.datasource = datasource;
-        this.campaign = campaign;
-        this.daily = daily;
-        this.clicks = clicks;
-        this.impressions = impressions;
-    }
 
     public String getDatasource() {
         return datasource;
