@@ -1,19 +1,30 @@
 package com.bbt.rec.adverity.application;
 
 import com.bbt.rec.adverity.application.dto.CtrSummaryDto;
+import com.bbt.rec.adverity.application.dto.Mapper;
 import com.bbt.rec.adverity.application.dto.MetricInTimeDto;
+import com.bbt.rec.adverity.domain.AdEntity;
 import com.bbt.rec.adverity.domain.AdService;
 import com.bbt.rec.adverity.domain.Dimension;
+import com.bbt.rec.adverity.domain.ImportService;
 import com.bbt.rec.adverity.domain.Metric;
 import com.bbt.rec.adverity.exception.InvalidDimensionTypeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.ACCEPTED;
 
@@ -22,6 +33,7 @@ import static org.springframework.http.HttpStatus.ACCEPTED;
 class AdverityController {
 
     private final AdService service;
+    private final ImportService importService;
 
     @GetMapping("/impressions")
     ResponseEntity<MetricInTimeDto> findImpressionsInTimeWindow(@RequestParam(value = "from", required = false)
@@ -98,11 +110,28 @@ class AdverityController {
     }
 
     @PostMapping("/add")
-    ResponseEntity<Void> submitAdData() {
-        //TODO upload file
+    ResponseEntity<Void> submitAdData(@RequestParam("file") MultipartFile file) {
+        importInBackground(file);
+        System.out.println("Import in progress");
         return ResponseEntity
                 .status(ACCEPTED)
                 .build();
+    }
+
+    private void importInBackground(MultipartFile file) {
+        Runnable runnable = () -> {
+            List<AdEntity> entities = null;
+            try {
+                entities = importService.importFromCsv(file).stream()
+                        .map(Mapper::toEntity)
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Optional.ofNullable(entities).ifPresent(service::store);
+            System.out.println("Import finished!");
+        };
+        new Thread(runnable).start();
     }
 
     private Dimension validateDimension(String requested) {

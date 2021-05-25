@@ -58,6 +58,15 @@ Should you be interested in summarized metric (`CLICKS` or `IMPRESSIONS`) for gi
 
 And yes, you can be ~~lazy~~ effort-efficient here as well (e.g. `i` instead of `IMPRESSIONS` and so on)  
 
+### Adding entries
+
+`POST /add`
+
+This endpoint can be called when you want to add some more data to application storage. 
+It needs to be provided as request parameter `file` and can not exceed 10MB of size. 
+File must be of type csv with column headers `Datasource,Campaign,Daily,Clicks,Impressions`
+Please note that during import all queries are blocked with service returning HTTP 503, even if initializing request receives a response. 
+
 ## Dev Decisions Background
 * Dockerfile is prepared assuming that if you have Docker you also have Maven and JDK 11. Hopefully it is a fair assumption ;) 
 * Spring because extreme performance has not been considered a priority but optimal development speed has.
