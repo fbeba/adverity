@@ -2,19 +2,14 @@ package com.bbt.rec.adverity;
 
 import com.bbt.rec.adverity.application.dto.AdDto;
 import com.bbt.rec.adverity.domain.ImportService;
-import com.bbt.rec.adverity.exception.InvalidDimensionTypeException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.FileSystemResource;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class AdverityApplicationTests {
@@ -24,9 +19,10 @@ class AdverityApplicationTests {
 
     @Test
     void csvFileGetsImported() throws Exception {
-        var path = String.join(File.separator, new FileSystemResource("").getFile().getAbsolutePath(), "src", "test", "resources", "ads_input_short.csv");
+        var resourceFile = Paths.get("src", "main", "resources", "ads_input_short.csv")
+                .toAbsolutePath().toString();
 
-        var result = importService.importFromCsv(path);
+        var result = importService.importFromCsv(resourceFile);
 
         assertThat(result)
                 .hasSize(3)
