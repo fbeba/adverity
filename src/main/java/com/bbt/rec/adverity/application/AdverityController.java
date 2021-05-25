@@ -25,17 +25,28 @@ class AdverityController {
 
     @GetMapping("/impressions")
     ResponseEntity<MetricInTimeDto> findImpressionsInTimeWindow(@RequestParam(value = "from", required = false)
-                                                                @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                                                final LocalDate requestedFrom,
+                                                                @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedFrom,
                                                                 @RequestParam(value = "to", required = false)
-                                                                @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                                                final LocalDate requestedTo) {
+                                                                @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedTo) {
         var from = Optional.ofNullable(requestedFrom).orElse(LocalDate.MIN);
         var to = Optional.ofNullable(requestedTo).orElse(LocalDate.now());
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(service.queryDailyMetrics(Metric.IMPRESSIONS, from, to));
+    }
+
+    @GetMapping("/clicks")
+    ResponseEntity<MetricInTimeDto> findClicksInTimeWindow(@RequestParam(value = "from", required = false)
+                                                           @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedFrom,
+                                                           @RequestParam(value = "to", required = false)
+                                                           @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedTo) {
+        var from = Optional.ofNullable(requestedFrom).orElse(LocalDate.MIN);
+        var to = Optional.ofNullable(requestedTo).orElse(LocalDate.now());
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(service.queryDailyMetrics(Metric.CLICKS, from, to));
     }
 
     @GetMapping("/ctr")
@@ -46,19 +57,37 @@ class AdverityController {
                 .body(service.queryCtr(dimension));
     }
 
-    @GetMapping("/metric/{metric}/{datasource}")
-    ResponseEntity<Integer> getMetric(@PathVariable(value = "metric") final String requestedMetric,
-                                      @PathVariable(value = "datasource") final String datasource,
-                                      @RequestParam(value = "from", required = false)
-                                      @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                      final LocalDate requestedFrom,
-                                      @RequestParam(value = "to", required = false)
-                                      @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                      final LocalDate requestedTo) {
+    @GetMapping("/metric/{metric}/byDatasource/{datasource}")
+    ResponseEntity<Integer> getMetricByDatasource(@PathVariable(value = "metric") final String requestedMetric,
+                                                  @PathVariable(value = "datasource") final String datasource,
+                                                  @RequestParam(value = "from", required = false)
+                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedFrom,
+                                                  @RequestParam(value = "to", required = false)
+                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedTo) {
         var metric = validateMetric(requestedMetric);
         var dimension = Dimension.builder()
                 .ofType(Dimension.DimensionType.DATASOURCE)
                 .andValue(datasource)
+                .build();
+        var from = Optional.ofNullable(requestedFrom).orElse(LocalDate.MIN);
+        var to = Optional.ofNullable(requestedTo).orElse(LocalDate.now());
+
+        return ResponseEntity
+                .ok()
+                .body(service.querySummarizingMetric(metric, dimension, from, to));
+    }
+
+    @GetMapping("/metric/{metric}/byCampaign/{campaign}")
+    ResponseEntity<Integer> getMetricByCampaign(@PathVariable(value = "metric") final String requestedMetric,
+                                                @PathVariable(value = "campaign") final String campaign,
+                                                @RequestParam(value = "from", required = false)
+                                                @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedFrom,
+                                                @RequestParam(value = "to", required = false)
+                                                @DateTimeFormat(pattern = "yyyy-MM-dd") final LocalDate requestedTo) {
+        var metric = validateMetric(requestedMetric);
+        var dimension = Dimension.builder()
+                .ofType(Dimension.DimensionType.CAMPAIGN)
+                .andValue(campaign)
                 .build();
         var from = Optional.ofNullable(requestedFrom).orElse(LocalDate.MIN);
         var to = Optional.ofNullable(requestedTo).orElse(LocalDate.now());
