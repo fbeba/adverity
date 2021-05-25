@@ -19,12 +19,13 @@ public class InitialDataLoad implements CommandLineRunner {
 
     @Override
     public void run(final String... args) throws Exception {
-        var resourceFile = Paths.get("src", "main", "resources", "ads_input_short.csv")
+        var resourceFile = Paths.get("src", "main", "resources", "ads_input.csv")
                 .toAbsolutePath().toString();
         var entities = importService.importFromCsv(resourceFile)
                 .stream()
                 .map(Mapper::toEntity)
                 .collect(Collectors.toList());
+        System.out.println("Initial dataload completed");
         adService.store(entities);
     }
 }
