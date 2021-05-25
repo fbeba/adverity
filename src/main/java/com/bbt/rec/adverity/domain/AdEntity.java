@@ -10,7 +10,7 @@ public class AdEntity {
     private final int clicks;
     private final int impressions;
 
-    AdEntity(final String datasource, final String campaign, final LocalDate daily, final int clicks, final int impressions) {
+    public AdEntity(final String datasource, final String campaign, final LocalDate daily, final int clicks, final int impressions) {
         this.datasource = datasource;
         this.campaign = campaign;
         this.daily = daily;

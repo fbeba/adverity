@@ -3,14 +3,12 @@ package com.bbt.rec.adverity.application.dto;
 import com.bbt.rec.adverity.util.LocalDateConverter;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Builder
+@Getter
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor

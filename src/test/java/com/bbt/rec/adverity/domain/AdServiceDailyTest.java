@@ -27,10 +27,11 @@ class AdServiceDailyTest {
     @Test
     void shouldReturnDailyImpressions() {
 
-        var result = service.queryDailyImpressions(LocalDate.MIN, LocalDate.MAX);
+        var result = service.queryDailyMetrics(Metric.IMPRESSIONS, LocalDate.MIN, LocalDate.MAX);
 
-        assertThat(result.getImpressions())
-                .extracting("date", "impressions")
+        assertThat(result.getMetricType()).isEqualTo(Metric.IMPRESSIONS.toString());
+        assertThat(result.getValues())
+                .extracting("date", "count")
                 .contains(
                         Tuple.tuple(now().minusDays(1), 100),
                         Tuple.tuple(now(), 220),
@@ -41,10 +42,10 @@ class AdServiceDailyTest {
     @Test
     void shouldReturnDateRestrictedDailyImpressions() {
 
-        var result = service.queryDailyImpressions(LocalDate.now(), LocalDate.now());
+        var result = service.queryDailyMetrics(Metric.IMPRESSIONS, LocalDate.now(), LocalDate.now());
 
-        assertThat(result.getImpressions())
-                .extracting("date", "impressions")
+        assertThat(result.getValues())
+                .extracting("date", "count")
                 .contains(
                         Tuple.tuple(now(), 220)
                 );
@@ -53,8 +54,8 @@ class AdServiceDailyTest {
     @Test
     void shouldReturnNoDailyImpressions() {
 
-        var result = service.queryDailyImpressions(LocalDate.now().plusWeeks(4), LocalDate.now().plusWeeks(5));
+        var result = service.queryDailyMetrics(Metric.IMPRESSIONS, LocalDate.now().plusWeeks(4), LocalDate.now().plusWeeks(5));
 
-        assertThat(result.getImpressions()).isEmpty();
+        assertThat(result.getValues()).isEmpty();
     }
 }

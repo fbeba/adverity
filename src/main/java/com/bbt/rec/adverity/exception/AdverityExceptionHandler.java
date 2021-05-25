@@ -19,7 +19,7 @@ public class AdverityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = RepositoryLockedException.class)
     protected ResponseEntity<Object> handleLockedRepo(RuntimeException ex, WebRequest request) {
-        String body = "Repository currently not available.";
+        String body = "Repository is currently not available.";
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE, request);
     }
 }

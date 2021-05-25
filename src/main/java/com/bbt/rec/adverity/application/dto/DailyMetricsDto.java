@@ -5,8 +5,9 @@ import lombok.Value;
 import java.time.LocalDate;
 
 @Value
-class DailyImpressionsDto {
+class DailyMetricsDto {
 
     LocalDate date;
-    int impressions;
+    int count;
+
 }

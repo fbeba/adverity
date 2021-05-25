@@ -1,7 +1,7 @@
 package com.bbt.rec.adverity.domain;
 
 import com.bbt.rec.adverity.application.dto.CtrSummaryDto;
-import com.bbt.rec.adverity.application.dto.DailySummaryDto;
+import com.bbt.rec.adverity.application.dto.MetricInTimeDto;
 import com.bbt.rec.adverity.application.dto.Mapper;
 import com.bbt.rec.adverity.infrastructure.InMemoryAdRepository;
 import com.bbt.rec.adverity.infrastructure.LockedAdRepository;
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 public class AdService {
 
     private final AdRepository activeRepository = new InMemoryAdRepository();
-    private final AdRepository lockedRepository = new LockedAdRepository();
     private AdRepository repository = activeRepository;
 
     public List<AdEntity> store(final List<AdEntity> entities) {
@@ -31,7 +30,7 @@ public class AdService {
         return repository.getAdsBy(dimension)
                 .stream()
                 .filter(ad -> ad.inDateRange(from, to))
-                .map(extractSummarizingMetric(metric))
+                .map(extractMetric(metric))
                 .reduce(Integer::sum)
                 .orElse(0);
     }
@@ -45,14 +44,15 @@ public class AdService {
         return Mapper.toCtrDto(adsByDimension, dimension);
     }
 
-    public DailySummaryDto queryDailyImpressions(LocalDate from, LocalDate to) {
-        var impressionsDaily = repository.getAdsByDates(from, to)
+    public MetricInTimeDto queryDailyMetrics(Metric metric, LocalDate from, LocalDate to) {
+        var extractedMetric = extractMetric(metric);
+        var metricsDaily = repository.getAdsByDates(from, to)
                 .entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> sum(entry.getValue(), AdEntity::getImpressions)
+                        entry -> sum(entry.getValue(), extractedMetric)
                 ));
-        return Mapper.toDailyDto(impressionsDaily);
+        return Mapper.toDailyDto(metric, metricsDaily);
     }
 
     private <T> int sum(final List<T> value, final Function<T, Integer> extractor) {
@@ -69,7 +69,7 @@ public class AdService {
         return Math.round(precise * 10000d) / 100d;
     }
 
-    private Function<AdEntity, Integer> extractSummarizingMetric(Metric metricType) {
+    private Function<AdEntity, Integer> extractMetric(Metric metricType) {
         switch (metricType) {
             case CLICKS:
                 return AdEntity::getClicks;
@@ -84,6 +84,6 @@ public class AdService {
     }
 
     private void lockRepository() {
-        repository = lockedRepository;
+        repository = new LockedAdRepository();
     }
 }

@@ -1,13 +1,13 @@
 package com.bbt.rec.adverity.application;
 
 import com.bbt.rec.adverity.application.dto.CtrSummaryDto;
-import com.bbt.rec.adverity.application.dto.DailySummaryDto;
+import com.bbt.rec.adverity.application.dto.MetricInTimeDto;
 import com.bbt.rec.adverity.domain.AdService;
 import com.bbt.rec.adverity.domain.Dimension;
 import com.bbt.rec.adverity.domain.Metric;
 import com.bbt.rec.adverity.exception.InvalidDimensionTypeException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +23,14 @@ class AdverityController {
     private final AdService service;
 
     @GetMapping("/impressions")
-    ResponseEntity<DailySummaryDto> findImpressionsInTimeWindow(@RequestParam(value = "from", required = false) final LocalDate requestedFrom,
+    ResponseEntity<MetricInTimeDto> findImpressionsInTimeWindow(@RequestParam(value = "from", required = false) final LocalDate requestedFrom,
                                                                 @RequestParam(value = "to", required = false) final LocalDate requestedTo) {
         var from = Optional.ofNullable(requestedFrom).orElse(LocalDate.MIN);
         var to = Optional.ofNullable(requestedTo).orElse(LocalDate.now());
         return ResponseEntity
                 .ok()
-                .body(service.queryDailyImpressions(from, to));
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(service.queryDailyMetrics(Metric.IMPRESSIONS, from, to));
     }
 
     @GetMapping("/ctr")

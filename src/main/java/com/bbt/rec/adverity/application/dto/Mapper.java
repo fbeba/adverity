@@ -1,6 +1,8 @@
 package com.bbt.rec.adverity.application.dto;
 
+import com.bbt.rec.adverity.domain.AdEntity;
 import com.bbt.rec.adverity.domain.Dimension;
+import com.bbt.rec.adverity.domain.Metric;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -17,11 +19,15 @@ public class Mapper {
         return new CtrSummaryDto(ctrs);
     }
 
-    public static DailySummaryDto toDailyDto(final Map<LocalDate, Integer> impressionsDaily) {
+    public static MetricInTimeDto toDailyDto(final Metric metric, final Map<LocalDate, Integer> impressionsDaily) {
         var impressions = impressionsDaily
                 .entrySet().stream()
-                .map(entry -> new DailyImpressionsDto(entry.getKey(), entry.getValue()))
+                .map(entry -> new DailyMetricsDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
-        return new DailySummaryDto(impressions);
+        return new MetricInTimeDto(metric.toString(), impressions);
+    }
+
+    public static AdEntity toEntity(final AdDto dto) {
+        return new AdEntity(dto.getDatasource(), dto.getCampaign(), dto.getDaily(), dto.getClicks(), dto.getImpressions());
     }
 }
