@@ -2,6 +2,7 @@ package com.bbt.rec.adverity;
 
 import com.bbt.rec.adverity.application.dto.AdDto;
 import com.bbt.rec.adverity.domain.ImportService;
+import com.bbt.rec.adverity.exception.InvalidDimensionTypeException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import java.io.File;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class AdverityApplicationTests {
@@ -35,5 +38,4 @@ class AdverityApplicationTests {
                         .impressions(22425)
                         .build());
     }
-
 }

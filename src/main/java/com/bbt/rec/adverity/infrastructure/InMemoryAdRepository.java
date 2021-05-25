@@ -31,12 +31,14 @@ public class InMemoryAdRepository implements AdRepository {
                 return dimension.getValues()
                         .stream()
                         .map(byCampaignRepo::get)
+                        .filter(Objects::nonNull)
                         .flatMap(List::stream)
                         .collect(toSet());
             case DATASOURCE:
                 return dimension.getValues()
                         .stream()
                         .map(byDatasourceRepo::get)
+                        .filter(Objects::nonNull)
                         .flatMap(List::stream)
                         .collect(toSet());
         }

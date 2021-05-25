@@ -17,6 +17,12 @@ public class AdverityExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    protected ResponseEntity<Object> handleIllegalArgument(RuntimeException ex, WebRequest request) {
+        String body = "Invalid parameter specified.";
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler(value = RepositoryLockedException.class)
     protected ResponseEntity<Object> handleLockedRepo(RuntimeException ex, WebRequest request) {
         String body = "Repository is currently not available.";

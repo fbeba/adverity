@@ -73,10 +73,19 @@ class AdServiceTotalClicksTest {
     }
 
     @Test
-    void shouldReportZeroForNonExistentData() {
+    void shouldReportZeroForNoDataForExistingSeriesInGivenWindow() {
         var dimension = Dimension.builder().ofType(CAMPAIGN).andValue("CampOne").build();
 
         var result = service.querySummarizingMetric(IMPRESSIONS, dimension, now().plusWeeks(1), LocalDate.MAX);
+
+        assertThat(result).isEqualTo(0);
+    }
+
+    @Test
+    void shouldReportZeroForNonExistingSeries() {
+        var dimension = Dimension.builder().ofType(CAMPAIGN).andValue("dummy").build();
+
+        var result = service.querySummarizingMetric(IMPRESSIONS, dimension, LocalDate.MIN, LocalDate.MAX);
 
         assertThat(result).isEqualTo(0);
     }
