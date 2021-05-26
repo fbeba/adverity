@@ -67,6 +67,11 @@ It needs to be provided as request parameter `file` and can not exceed 10MB of s
 File must be of type csv with column headers `Datasource,Campaign,Daily,Clicks,Impressions`
 Please note that during import all queries are blocked with service returning HTTP 503, even if initializing request receives a response. 
 
+### AWS
+
+For showoff purposes I created an AWS deployment of the service. It is available under:
+http://ec2-54-154-185-220.eu-west-1.compute.amazonaws.com:8080
+
 ## Dev Decisions Background
 * Dockerfile is prepared assuming that if you have Docker you also have Maven and JDK 11. Hopefully it is a fair assumption ;) 
 * Spring because extreme performance has not been considered a priority but optimal development speed has.
